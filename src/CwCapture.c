@@ -117,7 +117,7 @@ int stream_off(struct CaptureDevice * cam) {
   return v4l2_capture_stop(cam->fd, cam->buf_type);
 }
 
-int capture(struct CaptureDevice * cam, uint8_t * img) {
+int capture(struct CaptureDevice * cam) {
   v4l2_capture_dq_v4l2_buffer(cam->fd, cam->buffer);
   
   if (cam->data.imgbuf == NULL) {
@@ -128,8 +128,11 @@ int capture(struct CaptureDevice * cam, uint8_t * img) {
   memcpy(cam->data.imgbuf, (uint32_t *)(void *)cam->buffer->m.userptr, cam->img_bytes);
   cam->data.usec = 1000000U * cam->buffer->timestamp.tv_sec \
                        + 1U * cam->buffer->timestamp.tv_usec;
-  yuv_rgb888_conversion(cam->data.imgbuf, img, cam->width, cam->height);
-  
+
   v4l2_capture_q_v4l2_buffer(cam->fd, cam->buffer);
   return 0;
+}
+
+int convert(struct CaptureDevice * cam, uint8_t * img) {
+  return yuv_rgb888_conversion(cam->data.imgbuf, img, cam->width, cam->height);
 }

@@ -397,8 +397,6 @@ int yuv_rgb888_conversion(uint8_t * yuyv_buffer,
       rgbcount++;
     }
   }
-
-  fprintf(stdout, "conversion end \n");
   return 0;
 }
 

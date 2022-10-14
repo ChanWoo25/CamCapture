@@ -7,6 +7,9 @@
 
 int main(int argc, char * argv[])
 {
+
+  std::cout << "int: " << 0b11 << std::endl;
+
   auto cam = (CaptureDevice *) std::malloc(sizeof(CaptureDevice));
 
   initialize(cam, 0);
@@ -23,7 +26,8 @@ int main(int argc, char * argv[])
   stream_on(cam);
 
   uint8_t * img = (uint8_t *) std::malloc(sizeof(int8_t) * cam->width * cam->height * 3);
-  capture(cam, img);
+  capture(cam);
+  convert(cam, img);
   // fprintf(stdout, "address: %x\n", cam->data.imgbuf);
   // fprintf(stdout, "%d, %ld \n", cam->buffer->sequence, cam->data.usec);
 
@@ -31,7 +35,10 @@ int main(int argc, char * argv[])
   mat_img = cv::Mat(height, width, CV_8UC3, img);
   cv::imwrite("test_image.png", mat_img);
 
-  capture(cam, img);
+  capture(cam);
+
+  convert(cam, img);
+
   mat_img = cv::Mat(height, width, CV_8UC3, img);
   cv::imwrite("test_image2.png", mat_img);
    

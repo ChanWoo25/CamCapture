@@ -60,7 +60,9 @@ int stream_off(struct CaptureDevice * cam);
 // Capture image and fill data in cam->data.
 // Also, return rgb888 format image through img pointer.
 // img must be allocated beforehand. 
-int capture(struct CaptureDevice * cam , uint8_t * img);
+int capture(struct CaptureDevice * cam);
+
+int convert(struct CaptureDevice * cam, uint8_t * img);
 
 #ifdef __cplusplus
 }
