@@ -1,5 +1,5 @@
-#ifndef CW_V4L2_H__
-#define CW_V4L2_H__
+#ifndef CAPTURE_H__
+#define CAPTURE_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -19,7 +19,7 @@ struct CaptureDevice {
   int32_t mem_type; // V4L2_MEMORY_USERPTR (UserFixed)
 
   uint8_t v_idx;    // video node index.
-  uint8_t f_idx;    // selected format option index. 
+  uint8_t f_idx;    // selected format option index.
   uint8_t debug;    // verbose or not (not used now)
   uint8_t reserved; // reserverd. (not used now)
 
@@ -59,7 +59,7 @@ int stream_off(struct CaptureDevice * cam);
 
 // Capture image and fill data in cam->data.
 // Also, return rgb888 format image through img pointer.
-// img must be allocated beforehand. 
+// img must be allocated beforehand.
 int capture(struct CaptureDevice * cam);
 
 int convert(struct CaptureDevice * cam, uint8_t * img);

@@ -1,9 +1,10 @@
-#include "v4l2utils.h"
+#include <v4l2utils.h>
+
 #define UYVY_BYTES_PER_PIXEL 2U
 
 
-struct v4l2_fmtdesc * get_v4l2_fmtdesc(const uint32_t v_idx,  
-                                       const uint32_t f_idx, 
+struct v4l2_fmtdesc * get_v4l2_fmtdesc(const uint32_t v_idx,
+                                       const uint32_t f_idx,
                                        const uint8_t verbose)
 {
   char * video_node = (char *) malloc(sizeof(char) * 16);
@@ -14,9 +15,9 @@ struct v4l2_fmtdesc * get_v4l2_fmtdesc(const uint32_t v_idx,
     goto exit_video_node;
   }
 
-	struct v4l2_fmtdesc * fmt = 
+	struct v4l2_fmtdesc * fmt =
     (struct v4l2_fmtdesc *) malloc(sizeof(struct v4l2_format));
-  if (fmt < 0) {    
+  if (fmt < 0) {
     fprintf(stderr, "%s(): memory allocation failed(fmt)%s\n", __func__, strerror(errno));
     goto exit_fmt;
   }
@@ -29,16 +30,16 @@ struct v4l2_fmtdesc * get_v4l2_fmtdesc(const uint32_t v_idx,
   }
   else
   {
-    if (verbose) 
+    if (verbose)
     {
-      fprintf(stdout, "(%s)(capture-%02d) supported format -> %s\n", 
+      fprintf(stdout, "(%s)(capture-%02d) supported format -> %s\n",
                        video_node, f_idx, fmt->description);
     }
     close(fd);
     free(video_node);
     return fmt;
   }
-  	
+
 exit_fmt:
   free(fmt);
   close(fd);
@@ -49,9 +50,9 @@ exit_video_node:
 
 struct v4l2_fmtdesc * get_v4l2_fmtdesc_of(const int fd, const uint32_t f_idx)
 {
-	struct v4l2_fmtdesc * fmt = 
+	struct v4l2_fmtdesc * fmt =
     (struct v4l2_fmtdesc *) malloc(sizeof(struct v4l2_format));
-  if (fmt < 0) {    
+  if (fmt < 0) {
     fprintf(stderr, "%s(): memory allocation failed(fmt)%s\n", __func__, strerror(errno));
     free(fmt);
     return NULL;
@@ -70,9 +71,9 @@ struct v4l2_fmtdesc * get_v4l2_fmtdesc_of(const int fd, const uint32_t f_idx)
   }
 }
 
-struct v4l2_frmsizeenum * get_v4l2_frmsizeenum(const uint32_t v_idx, 
+struct v4l2_frmsizeenum * get_v4l2_frmsizeenum(const uint32_t v_idx,
                                                const uint32_t f_idx,
-                                               const uint32_t pixel_format, 
+                                               const uint32_t pixel_format,
                                                const uint8_t verbose)
 {
   char * video_node = (char *) malloc(sizeof(char) * 16);
@@ -83,7 +84,7 @@ struct v4l2_frmsizeenum * get_v4l2_frmsizeenum(const uint32_t v_idx,
     goto exit_video_node;
   }
 
-	struct v4l2_frmsizeenum * frmsize = 
+	struct v4l2_frmsizeenum * frmsize =
     (struct v4l2_frmsizeenum *) malloc (sizeof(struct v4l2_frmsizeenum));
   if (frmsize < 0) {
     fprintf(stderr, "%s(): memory allocation failed(frmsizeenum)%s\n", __func__, strerror(errno));
@@ -95,20 +96,20 @@ struct v4l2_frmsizeenum * get_v4l2_frmsizeenum(const uint32_t v_idx,
 	if (ioctl(fd, VIDIOC_ENUM_FRAMESIZES, (frmsize)) < 0) {
     fprintf(stderr, "ioctl VIDIOC_ENUM_FRAMESIZES is failed: %s\n", strerror(errno));
     goto exit_frmsize;
-  } 
+  }
   else
   {
     assert (frmsize->type == V4L2_FRMSIZE_TYPE_DISCRETE);
-    if (verbose) 
+    if (verbose)
     {
-      fprintf(stdout, "(%s)(format-%d) frame size: %d x %d, \n", 
+      fprintf(stdout, "(%s)(format-%d) frame size: %d x %d, \n",
                        video_node, f_idx, frmsize->discrete.width, frmsize->discrete.height);
     }
     close(fd);
     free(video_node);
     return frmsize;
   }
-  	
+
 exit_frmsize:
   free(frmsize);
   close(fd);
@@ -117,23 +118,23 @@ exit_video_node:
   return NULL;
 }
 
-struct v4l2_frmsizeenum * get_v4l2_frmsizeenum_of(const int fd, 
-                                                   const uint32_t f_idx, 
+struct v4l2_frmsizeenum * get_v4l2_frmsizeenum_of(const int fd,
+                                                   const uint32_t f_idx,
                                                    const uint32_t pixel_format)
 {
 	struct v4l2_frmsizeenum * frmsize = (struct v4l2_frmsizeenum *) malloc (sizeof(struct v4l2_frmsizeenum));
   if (frmsize < 0) {
-    fprintf(stderr, "%s(): memory allocation failed(frmsizeenum)%s\n", __func__, strerror(errno));  
+    fprintf(stderr, "%s(): memory allocation failed(frmsizeenum)%s\n", __func__, strerror(errno));
     return NULL;
   }
 
 	frmsize->pixel_format = pixel_format;
 	frmsize->index        = f_idx;
 	if (ioctl(fd, VIDIOC_ENUM_FRAMESIZES, (frmsize)) < 0) {
-    // fprintf(stderr, "ioctl VIDIOC_ENUM_FRAMESIZES is failed: %s\n", strerror(errno));   
+    // fprintf(stderr, "ioctl VIDIOC_ENUM_FRAMESIZES is failed: %s\n", strerror(errno));
     free(frmsize);
     return NULL;
-  } 
+  }
   else
   {
     assert (frmsize->type == V4L2_FRMSIZE_TYPE_DISCRETE);
@@ -150,9 +151,9 @@ int set_v4l2_format_of(const int fd,
 	struct v4l2_format fmt;
 	memset(&fmt, 0, sizeof(struct v4l2_format));
 	fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-  
+
 	if (ioctl(fd, VIDIOC_G_FMT, &fmt) < 0) {
-    fprintf(stderr, "ioctl VIDIO_G_FMT is failed: %s\n", strerror(errno)); 
+    fprintf(stderr, "ioctl VIDIO_G_FMT is failed: %s\n", strerror(errno));
 		return -1;
 	}
 
@@ -164,12 +165,12 @@ int set_v4l2_format_of(const int fd,
 
   if (verbose)
   {
-    fprintf(stdout, "%s(): try [format: %d, width, %d, height: %d]\n", 
-                    __func__, fmt.fmt.pix.pixelformat, width, height); 
+    fprintf(stdout, "%s(): try [format: %d, width, %d, height: %d]\n",
+                    __func__, fmt.fmt.pix.pixelformat, width, height);
   }
-                
+
 	if (ioctl(fd, VIDIOC_S_FMT, &fmt) < 0) {
-		fprintf(stderr, "ioctl VIDIOC_S_FMT is failed: %s\n", strerror(errno)); 
+		fprintf(stderr, "ioctl VIDIOC_S_FMT is failed: %s\n", strerror(errno));
 		return -1;
 	}
 
@@ -177,7 +178,7 @@ int set_v4l2_format_of(const int fd,
 	memset(&chk_fmt, 0, sizeof(struct v4l2_format));
 	chk_fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	if (ioctl(fd, VIDIOC_G_FMT, &chk_fmt) < 0) {
-    fprintf(stderr, "ioctl VIDIO_G_FMT is failed: %s\n", strerror(errno)); 
+    fprintf(stderr, "ioctl VIDIO_G_FMT is failed: %s\n", strerror(errno));
 		return -1;
 	}
 
@@ -186,21 +187,21 @@ int set_v4l2_format_of(const int fd,
        && (fmt.fmt.pix.width == chk_fmt.fmt.pix.width)
        && (fmt.fmt.pix.height == chk_fmt.fmt.pix.height))
   {
-    if (verbose) 
+    if (verbose)
     {
-      fprintf(stdout, "%s(): device setup complete. [%d x %d]\n", __func__, width, height); 
+      fprintf(stdout, "%s(): device setup complete. [%d x %d]\n", __func__, width, height);
     }
     return 0;
   }
   else
   {
-    fprintf(stderr, "%s(): device setup complete, but different framesize. [%d x %d]\n", 
-                    __func__, width, height); 
+    fprintf(stderr, "%s(): device setup complete, but different framesize. [%d x %d]\n",
+                    __func__, width, height);
     return 1;
   }
 }
 
-// // in -- zero based video num 
+// // in -- zero based video num
 // // out availbble capture types, sizes, format
 void list_capture_resolutions_of_video(const int v_idx)
 {
@@ -211,14 +212,14 @@ void list_capture_resolutions_of_video(const int v_idx)
     fprintf(stderr, "Node %s: %s\n", video_node, strerror(errno));
     goto exit_video_node;
   }
-  
+
 	struct v4l2_fmtdesc * fmt = get_v4l2_fmtdesc(v_idx, 0, 0);
   if (!fmt) {
     fprintf(stderr, "%s(): Fail to read fmtdesc.\n", __func__);
     goto exit_fmt;
   }
 
-	struct v4l2_frmsizeenum * frmsize = NULL; 
+	struct v4l2_frmsizeenum * frmsize = NULL;
   // Assumption: All format index has same pixel_format.
   fprintf(stdout, "List of available frame-size.\n");
   for (uint8_t f_idx = 0; ; ++f_idx)
@@ -259,9 +260,9 @@ int v4l2_capture_stop(int fd, int buf_type) {
 }
 
 
-int set_v4l2_reqbuf_userptr(int fd, 
-                            unsigned int max_count, 
-                            unsigned int buf_type, 
+int set_v4l2_reqbuf_userptr(int fd,
+                            unsigned int max_count,
+                            unsigned int buf_type,
                             unsigned int mam_type)
 {
 	struct v4l2_requestbuffers reqbuf;
@@ -281,7 +282,7 @@ int set_v4l2_reqbuf_userptr(int fd,
 int allocate_v4l2_buffer(int fd, struct v4l2_buffer ** allocated_buffer, uint32_t img_bytes_size)
 {
   long sz = sysconf(_SC_PAGESIZE);
-  
+
   *allocated_buffer = (struct v4l2_buffer *) malloc (sizeof(struct v4l2_buffer));
   struct v4l2_buffer * buffer = (*allocated_buffer);
   if (buffer < 0) {
@@ -319,7 +320,7 @@ int v4l2_capture_dq_v4l2_buffer(int fd, struct v4l2_buffer * buffer)
 	if (ioctl(fd, VIDIOC_DQBUF, buffer) < 0) {
     fprintf(stderr, "ioctl VIDIOC_DQBUF: %s\n", strerror(errno));
 		return -1;
-	}	
+	}
 	return 0;
 }
 
@@ -329,7 +330,7 @@ int v4l2_capture_q_v4l2_buffer(int fd, struct v4l2_buffer * buffer)
 	if (ioctl(fd, VIDIOC_QBUF, buffer) < 0) {
     fprintf(stderr, "ioctl VIDIOC_QBUF: %s\n", strerror(errno));
 		return -1;
-	}	
+	}
 	return 0;
 }
 
@@ -341,9 +342,9 @@ void clean_buffer(struct v4l2_buffer * buffer) {
   memset(buffer, 0, sizeof(struct v4l2_buffer));
 }
 
-int yuv_rgb888_conversion(uint8_t * yuyv_buffer, 
-                          uint8_t * rgb_buffer, 
-                          int width_act, 
+int yuv_rgb888_conversion(uint8_t * yuyv_buffer,
+                          uint8_t * rgb_buffer,
+                          int width_act,
                           int height_act)
 {
   int i = 0, j = 0;
@@ -354,9 +355,9 @@ int yuv_rgb888_conversion(uint8_t * yuyv_buffer,
   int height = height_act;
   float u_val, v_val, y1_val, y2_val;
 
-  for (i = 0; i < height; i++) 
+  for (i = 0; i < height; i++)
   {
-    for (j = 0; j < width; j += 2) 
+    for (j = 0; j < width; j += 2)
     {
       u_val = (float)yuyv_buffer[yuvcount++];
       y1_val = (float)yuyv_buffer[yuvcount++];

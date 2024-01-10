@@ -1,4 +1,4 @@
-#include <CwCapture.h>
+#include <capture.h>
 #include <opencv2/opencv.hpp>
 
 #include <iostream>
@@ -41,7 +41,7 @@ int main(int argc, char * argv[])
 
   mat_img = cv::Mat(height, width, CV_8UC3, img);
   cv::imwrite("test_image2.png", mat_img);
-   
+
   stream_off(cam);
 
   free_buffer(cam);

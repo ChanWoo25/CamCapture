@@ -1,10 +1,10 @@
-#include <CwCapture.h>
-#include "v4l2utils.h"
+#include <capture.h>
+#include <v4l2utils.h>
 
 int initialize(struct CaptureDevice * cam, int v_idx) {
   sprintf(cam->node_name, "/dev/video%d", v_idx);
-  cam->buf_type = V4L2_BUF_TYPE_VIDEO_CAPTURE; 
-  cam->mem_type = V4L2_MEMORY_USERPTR; 
+  cam->buf_type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+  cam->mem_type = V4L2_MEMORY_USERPTR;
   cam->debug = 1;
 
   cam->v_idx = v_idx;
@@ -26,7 +26,7 @@ int list_options(struct CaptureDevice * cam) {
     return -1;
 
   // Assumption: All format index has same pixel_format.
-	struct v4l2_frmsizeenum * frmsize = NULL; 
+	struct v4l2_frmsizeenum * frmsize = NULL;
   fprintf(stdout, "\n# List of available frame-size. \n");
   for (uint8_t f_idx = 0; ; ++f_idx)
   {
@@ -41,10 +41,10 @@ int list_options(struct CaptureDevice * cam) {
       else
         break;
     }
-    else 
+    else
     {
-      fprintf(stdout, "(%s)(format-%d) frame size: [%4d x %4d] \n", cam->node_name, f_idx, frmsize->discrete.width, frmsize->discrete.height);      
-      free(frmsize);  
+      fprintf(stdout, "(%s)(format-%d) frame size: [%4d x %4d] \n", cam->node_name, f_idx, frmsize->discrete.width, frmsize->discrete.height);
+      free(frmsize);
     }
   }
 
@@ -56,8 +56,8 @@ int set_option(struct CaptureDevice * cam, int f_idx)
 {
   int flag;
   cam->f_idx = f_idx;
-  
-	struct v4l2_fmtdesc * fmt = get_v4l2_fmtdesc_of(cam->fd, cam->f_idx); 
+
+	struct v4l2_fmtdesc * fmt = get_v4l2_fmtdesc_of(cam->fd, cam->f_idx);
   if (fmt == NULL)
     return -1;
   else {
@@ -76,25 +76,25 @@ int set_option(struct CaptureDevice * cam, int f_idx)
   }
 
   flag = set_v4l2_format_of(cam->fd, cam->width, cam->height, cam->pixel_format, 0);
-  if (flag < 0)  
+  if (flag < 0)
     return flag;
   else
     fprintf(stdout, "\n(%s) format %d is set. resolution: [%d x %d]\n", cam->node_name, cam->f_idx, cam->width, cam->height);
-                       
+
   return 0;
 }
 
 int alloc_buffer(struct CaptureDevice * cam) {
   int flag;
-     
+
   flag = set_v4l2_reqbuf_userptr(cam->fd, 1, cam->buf_type, cam->mem_type);
-  if (flag < 0)  
+  if (flag < 0)
     return flag;
-  
+
   flag = allocate_v4l2_buffer(cam->fd, &cam->buffer, cam->img_bytes);
   if (flag < 0)
     return flag;
-  
+
   return 0;
 }
 
@@ -119,7 +119,7 @@ int stream_off(struct CaptureDevice * cam) {
 
 int capture(struct CaptureDevice * cam) {
   v4l2_capture_dq_v4l2_buffer(cam->fd, cam->buffer);
-  
+
   if (cam->data.imgbuf == NULL) {
     cam->data.imgbuf = (uint8_t *) malloc(sizeof(uint8_t) * cam->img_bytes);
   }
