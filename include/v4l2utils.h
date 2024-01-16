@@ -1,3 +1,6 @@
+//
+// Author: Chanwoo Lee (leechanwoo25@gmail.com)
+//
 #ifndef V4L2_UTILS_H__
 #define V4L2_UTILS_H__
 

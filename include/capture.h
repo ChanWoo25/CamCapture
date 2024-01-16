@@ -1,3 +1,6 @@
+//
+// Author: Chanwoo Lee (leechanwoo25@gmail.com)
+//
 #ifndef CAPTURE_H__
 #define CAPTURE_H__
 

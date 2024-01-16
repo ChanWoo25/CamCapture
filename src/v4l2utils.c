@@ -1,3 +1,6 @@
+//
+// Author: Chanwoo Lee (leechanwoo25@gmail.com)
+//
 #include <v4l2utils.h>
 
 #define UYVY_BYTES_PER_PIXEL 2U

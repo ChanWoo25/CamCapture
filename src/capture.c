@@ -1,3 +1,6 @@
+//
+// Author: Chanwoo Lee (leechanwoo25@gmail.com)
+//
 #include <capture.h>
 #include <v4l2utils.h>
 
